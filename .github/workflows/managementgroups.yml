@@ -15,15 +15,6 @@ jobs:
         enable-AzPSSession: true 
         
     - name: Run Azure PowerShell script
-      uses: azure/powershell@v1
-      with:
-        inlineScript: |
-          Get-AzContext
-        # inlineScript: |
-        #   $inputObject = @{
-        #     DeploymentName        = 'alz-MGDeployment-{0}' -f (-join (Get-Date -Format 'yyyyMMddTHHMMssffffZ')[0..63])
-        #     Location              = 'EastUS'
-        #     TemplateFile          = "./infra-as-code/bicep/modules/managementGroups/managementGroups.bicep"
-        #     TemplateParameterFile = './infra-as-code/bicep/modules/managementGroups/parameters/managementGroups.parameters.all.json'}
-        #   New-AzTenantDeployment @inputObject
-        azPSVersion: "latest"
+      shell: pwsh
+      run: |
+        Get-AzContext
