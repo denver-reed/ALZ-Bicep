@@ -18,6 +18,7 @@ jobs:
       shell: pwsh
       run: |
           Get-ChildItem
+          pwd
           # $inputObject = @{
           #   DeploymentName        = 'alz-MGDeployment-{0}' -f (-join (Get-Date -Format 'yyyyMMddTHHMMssffffZ')[0..63])
           #   Location              = 'EastUS'
