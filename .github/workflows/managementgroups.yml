@@ -17,7 +17,8 @@ jobs:
     - name: Run Azure PowerShell script
       uses: azure/powershell@v1
       with:
-        inlineScript: ./powershellDeploy.ps1
+        inlineScript: |
+          Get-AzContext
         # inlineScript: |
         #   $inputObject = @{
         #     DeploymentName        = 'alz-MGDeployment-{0}' -f (-join (Get-Date -Format 'yyyyMMddTHHMMssffffZ')[0..63])
