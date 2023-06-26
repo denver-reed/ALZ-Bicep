@@ -18,6 +18,7 @@ jobs:
       uses: azure/powershell@v1
       with:
         inlineScript: |
+          pwd
           $inputObject = @{
             DeploymentName        = 'alz-MGDeployment-{0}' -f (-join (Get-Date -Format 'yyyyMMddTHHMMssffffZ')[0..63])
             Location              = 'EastUS'
