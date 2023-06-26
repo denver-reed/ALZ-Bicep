@@ -17,4 +17,5 @@ jobs:
     - name: Run Azure PowerShell script
       shell: pwsh
       run: |
+        Install-Module -Name Az -Repository PSGallery -Force -Confirm
         Get-AzContext
