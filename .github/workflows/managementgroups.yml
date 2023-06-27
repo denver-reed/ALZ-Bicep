@@ -28,3 +28,18 @@ jobs:
           TEMPLATEFILE="infra-as-code/bicep/modules/managementGroups/managementGroups.bicep"
           PARAMETERS="@infra-as-code/bicep/modules/managementGroups/parameters/managementGroups.parameters.all.json"
           az deployment tenant create --name ${NAME:0:63} --location $LOCATION --template-file $TEMPLATEFILE --parameters $PARAMETERS
+
+    - name: Create Policy Definitions
+      uses: azure/CLI@V1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          dateYMD=$(date +%Y%m%dT%H%M%S%NZ)
+          NAME="alz-PolicyDefsDefaults-${dateYMD}"
+          LOCATION="eastus"
+          MGID="alz"
+          TEMPLATEFILE="infra-as-code/bicep/modules/policy/definitions/customPolicyDefinitions.bicep"
+          PARAMETERS="@infra-as-code/bicep/modules/policy/definitions/parameters/customPolicyDefinitions.parameters.all.json"
+          
+          az deployment mg create --name ${NAME:0:63} --location $LOCATION --management-group-id $MGID --template-file $TEMPLATEFILE --parameters $PARAMETERS        
+
