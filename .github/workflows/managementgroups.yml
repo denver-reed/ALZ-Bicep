@@ -16,7 +16,7 @@ jobs:
         creds: '${{secrets.AZURE_CREDENTIALS}}'
         enable-AzPSSession: true 
         
-    - name: Azure CLI script
+    - name: Deploy Management Groups
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
