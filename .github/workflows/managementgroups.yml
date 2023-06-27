@@ -7,7 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
+    - name: Check out repository code
+      uses: actions/checkout@v3
+      
     - name: Login via Az module
       uses: azure/actions/login@v1
       with:
@@ -20,9 +22,9 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           echo $env:BUILD_SOURCE_DIRECTORY
-          # dateYMD=$(date +%Y%m%dT%H%M%S%NZ)
-          # NAME="alz-MGDeployment-${dateYMD}"
-          # LOCATION="eastus"
-          # TEMPLATEFILE="$env:BUILD_SOURCESDIRECTORY/infra-as-code/bicep/modules/managementGroups/managementGroups.bicep"
-          # PARAMETERS="@infra-as-code/bicep/modules/managementGroups/parameters/managementGroups.parameters.all.json"
-          # az deployment tenant create --name ${NAME:0:63} --location $LOCATION --template-file $TEMPLATEFILE --parameters $PARAMETERS
+          dateYMD=$(date +%Y%m%dT%H%M%S%NZ)
+          NAME="alz-MGDeployment-${dateYMD}"
+          LOCATION="eastus"
+          TEMPLATEFILE="$env:BUILD_SOURCESDIRECTORY/infra-as-code/bicep/modules/managementGroups/managementGroups.bicep"
+          PARAMETERS="@infra-as-code/bicep/modules/managementGroups/parameters/managementGroups.parameters.all.json"
+          az deployment tenant create --name ${NAME:0:63} --location $LOCATION --template-file $TEMPLATEFILE --parameters $PARAMETERS
