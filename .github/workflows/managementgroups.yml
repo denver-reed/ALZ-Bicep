@@ -14,8 +14,9 @@ jobs:
         creds: '${{secrets.AZURE_CREDENTIALS}}'
         enable-AzPSSession: true 
         
-    - name: Run Azure PowerShell script
-      shell: pwsh
-      run: |
-        Install-Module -Name Az -Repository PSGallery -Confirm -Force
-        Get-AzContext
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az account show
