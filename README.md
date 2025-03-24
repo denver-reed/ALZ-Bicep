@@ -2,29 +2,34 @@
 
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/azure/alz-bicep.svg)](http://isitmaintained.com/project/azure/alz-bicep "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/azure/alz-bicep.svg)](http://isitmaintained.com/project/azure/alz-bicep "Percentage of issues still open")
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Azure/ALZ-Bicep/badge)](https://scorecard.dev/viewer/?uri=github.com/Azure/ALZ-Bicep)
 
 [![Update Policy Library](https://github.com/Azure/ALZ-Bicep/actions/workflows/update-policy.yml/badge.svg?branch=main)](https://github.com/Azure/ALZ-Bicep/actions/workflows/update-policy.yml)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Azure/ALZ-Bicep?style=flat&logo=github)
 
 ![Bicep Logo](docs/wiki/media/bicep-logo.png)
 
-Welcome to the Azure Landing Zones Bicep repo.
+Welcome to the Azure Landing Zones Bicep repository.
 
-Detailed information about how to use, deploy and extend artifacts found in this repo can be found on our Wiki:
+Detailed information about how to use, deploy, and extend artifacts found in this repository can be found on our Wiki:
 
 - [Home][wiki_home]
 - [Deployment Flow][wiki_deployment_flow]
   - [Network Topology: Hub and Spoke][wiki_deployment_flow_hs]
   - [Network Topology: Virtual WAN][wiki_deployment_flow_vwan]
 - [Consumer Guide][wiki_consumer_guide]
-  - [Accelerator][accelerator]
+  - [Accelerator][wiki_accelerator]
+  - [Classic Accelerator][wiki_classic_accelerator]
+  - [Azure Monitor Baseline Alerts for the Classic Accelerator][wiki_amba_classic_accelerator]
+  - [Known Issues][wiki_known_issues]
+  - [Frequently Asked Questions][wiki_faq]
 - [How Does ALZ-Bicep Implement Azure Policies?][wiki_policy_deep_dive]
   - [Adding Custom Azure Policy Definitions][wiki_policy_defs]
   - [Assigning Azure Policies][wiki_policy_assignments]
+- [How Does ALZ-Bicep Implement Resilient Deployments Across Availability Zones?][wiki_resiliency]
 - [Contributing][wiki_contributing]
 - [Telemetry Tracking Using Customer Usage Attribution (PID)][wiki_cuaid]
 - [Azure Container Registry Deployment - Private Bicep Registry][wiki_acrdeploy]
-- [Frequently Asked Questions][wiki_faq]
 - [Sample Pipelines][wiki_pipelines]
   - [GitHub Actions][wiki_pipelines_gh]
   - [Azure DevOps][wiki_pipelines_ado]
@@ -32,11 +37,11 @@ Detailed information about how to use, deploy and extend artifacts found in this
 
 ## Overview
 
-The Azure Landing Zones Bicep repo provides an approach for deploying and managing the core platform capabilities of Cloud Adoption Framework Azure Landing Zones conceptual architecture using Bicep.
+The Azure Landing Zones Bicep repository provides an approach for deploying and managing the core platform capabilities of the Cloud Adoption Framework Azure Landing Zones conceptual architecture using Bicep.
 
-In its current incarnation each module can be deployed separately via command line but in future releases a more automated approach, via orchestration modules, will be published; but due to current Bicep & ARM limitations this is not possible today.
+Currently, each module can be deployed separately via the command line. Future releases will include a more automated approach using orchestration modules, but due to current Bicep & ARM limitations, this is not possible today.
 
-> Have you seen our page in the Azure Architecture Center here: [Azure landing zones - Bicep modules design considerations][aac_article]
+> Check out our page in the Azure Architecture Center: [Azure landing zones - Bicep modules design considerations][aac_article]
 
 ## Getting Started
 
@@ -48,7 +53,7 @@ To get started with ALZ Bicep, please refer to the [Deployment Flow wiki page][w
 
 ### Azure Enablement Show Videos
 
-We have created a short 3-part series of video on the Azure Enablement Show that can be found below:
+We have created a short 3-part series of videos on the Azure Enablement Show that can be found below:
 
 <!-- markdownlint-disable -->
 #### Part 1 - Introduction to Azure Landing Zones Bicep
@@ -110,15 +115,19 @@ For support on the artifacts contained in this repository, please refer to [this
 [wiki_policy_deep_dive]:                        https://github.com/Azure/ALZ-Bicep/wiki/PolicyDeepDive "Wiki - Policy Deep Dive"
 [wiki_policy_defs]:                        https://github.com/Azure/ALZ-Bicep/wiki/AddingPolicyDefs "Wiki - Policy Definitions"
 [wiki_policy_assignments]:                        https://github.com/Azure/ALZ-Bicep/wiki/AssigningPolicies "Wiki - Policy Assignments"
+[wiki_resiliency]:                            https://github.com/Azure/ALZ-Bicep/wiki/Resiliency "Wiki - Resiliency"
 [wiki_contributing]:                          https://github.com/Azure/ALZ-Bicep/wiki/Contributing "Wiki - Contributing"
-[wiki_cuaid]:                          https://github.com/Azure/ALZ-Bicep/wiki/CustomerUsage "Wiki - Telemetry Usage ID"
-[wiki_acrdeploy]:                          https://github.com/Azure/ALZ-Bicep/wiki/ACRDeployment "Wiki - Private Bicep Registry"
-[vulnerability_reporting]:                          https://github.com/Azure/ALZ-Bicep/blob/main/SECURITY.md "Vulnerability reporting"
-[support_statement]:                          https://github.com/Azure/ALZ-Bicep/blob/main/SUPPORT.md "Microsoft Support Policy"
-[wiki_faq]:                          https://github.com/Azure/ALZ-Bicep/wiki/FAQ "Wiki - FAQs"
-[wiki_pipelines]:                          https://github.com/Azure/ALZ-Bicep/wiki/PipelinesOverview "Wiki - Sample Pipelines"
-[wiki_pipelines_gh]:                          https://github.com/Azure/ALZ-Bicep/wiki/PipelinesGitHub "Wiki - Sample Pipelines - GitHub Actions"
-[wiki_pipelines_ado]:                          https://github.com/Azure/ALZ-Bicep/wiki/PipelinesADO "Wiki - Sample Pipelines - Azure DevOps"
-[code_tours]:                                   https://github.com/Azure/ALZ-Bicep/wiki/CodeTour "Wiki - Code tours"
-[aac_article]:                                  https://learn.microsoft.com/azure/architecture/landing-zones/bicep/landing-zone-bicep "Azure Architecture Center - Azure landing zones - Bicep modules design considerations"
-[accelerator]:                                https://github.com/Azure/ALZ-Bicep/wiki/Accelerator "Accelerator"
+[wiki_accelerator]:                          <https://github.com/Azure/ALZ-Bicep/wiki/Accelerator> "Wiki - Accelerator"
+[wiki_classic_accelerator]:                          <https://github.com/Azure/ALZ-Bicep/wiki/ClassicAccelerator> "Wiki - Classic Accelerator (Deprecated)"
+[wiki_amba_classic_accelerator]:             <https://github.com/Azure/ALZ-Bicep/wiki/AzureMonitorBaselineAlerts> "Wiki - AMBA for Classic Accelerator (Deprecated)"
+[wiki_known_issues]:                          <https://github.com/Azure/ALZ-Bicep/wiki/KnownIssues> "Wiki - Known Issues"
+[wiki_faq]:                          <https://github.com/Azure/ALZ-Bicep/wiki/FAQ> "Wiki - FAQs"
+[wiki_cuaid]:                          <https://github.com/Azure/ALZ-Bicep/wiki/CustomerUsage> "Wiki - Telemetry Usage ID"
+[wiki_acrdeploy]:                          <https://github.com/Azure/ALZ-Bicep/wiki/ACRDeployment> "Wiki - Private Bicep Registry"
+[vulnerability_reporting]:                          <https://github.com/Azure/ALZ-Bicep/blob/main/SECURITY.md> "Vulnerability reporting"
+[support_statement]:                          <https://github.com/Azure/ALZ-Bicep/blob/main/SUPPORT.md> "Microsoft Support Policy"
+[wiki_pipelines]:                          <https://github.com/Azure/ALZ-Bicep/wiki/PipelinesOverview> "Wiki - Sample Pipelines"
+[wiki_pipelines_gh]:                          <https://github.com/Azure/ALZ-Bicep/wiki/PipelinesGitHub> "Wiki - Sample Pipelines - GitHub Actions"
+[wiki_pipelines_ado]:                          <https://github.com/Azure/ALZ-Bicep/wiki/PipelinesADO> "Wiki - Sample Pipelines - Azure DevOps"
+[code_tours]:                                   <https://github.com/Azure/ALZ-Bicep/wiki/CodeTour> "Wiki - Code tours"
+[aac_article]:                                  <https://learn.microsoft.com/azure/architecture/landing-zones/bicep/landing-zone-bicep> "Azure Architecture Center - Azure landing zones - Bicep modules design considerations"

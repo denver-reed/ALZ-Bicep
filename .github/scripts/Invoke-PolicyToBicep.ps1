@@ -13,8 +13,6 @@ param (
   [string]
   $rootPath = "./infra-as-code/bicep/modules/policy",
   [string]
-  $alzToolsPath = "$PWD/../Enterprise-Scale/src/Alz.Tools",
-  [string]
   $definitionsRoot = "definitions",
   [string]
   $lineEnding = "unix",
@@ -41,8 +39,16 @@ param (
 )
 
 # This script relies on a custom set of classes and functions
-# defined within the Alz.Tools PowerShell module.
-Import-Module $alzToolsPath -ErrorAction Stop
+# defined within the [ALZ-PowerShell-Module](https://github.com/Azure/Alz-powershell-module).
+if (-not (Get-Module -ListAvailable -Name ALZ)) {
+  # Module doesn't exist, so install it
+  Write-Information "====> ALZ module isn't already installed. Installing..." -InformationAction Continue
+  Install-Module -Name ALZ -Force -Scope CurrentUser -ErrorAction Stop -RequiredVersion '4.1.5'
+  Write-Information "====> ALZ module now installed." -InformationAction Continue
+}
+else {
+  Write-Information "====> ALZ module is already installed." -InformationAction Continue
+}
 
 # Line Endings function to be used in three functions below
 function Update-FileLineEndingType {
@@ -52,7 +58,7 @@ function Update-FileLineEndingType {
     $filePath
   )
 
-  (Get-Content $filePath | Edit-LineEndings -LineEnding $LineEnding) | Out-File $filePath
+  (Get-Content $filePath | Edit-LineEnding -LineEnding $LineEnding) | Out-File $filePath
 }
 
 #region Policy Definitions
@@ -152,14 +158,24 @@ function New-PolicySetDefinitionsBicepInputTxtFile {
     [System.Collections.Hashtable]$policySetDefinitionsOutputForBicep = [ordered]@{}
 
     # Loop through child Policy Set/Initiative Definitions if HashTable not == 0
-    if (($policyDefinitions.Count) -ne 0) {
+    if ($policyDefinitions.Count -ne 0) {
       $policyDefinitions | Sort-Object | ForEach-Object {
         if ($null -ne $_.groupNames -and $_.groupNames.Count -ne 0) {
           $joinedGroupNames = "'" + ($_.groupNames -join "','" ) + "'"
-          $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, $joinedGroupNames))
+          if (![string]::IsNullOrEmpty($_.definitionVersion)) {
+            $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, $joinedGroupNames, $_.definitionVersion))
+          }
+          else {
+            $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, $joinedGroupNames, ""))
+          }
         }
         else {
-          $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, ""))
+          if (![string]::IsNullOrEmpty($_.definitionVersion)) {
+            $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, "", $_.definitionVersion))
+          }
+          else {
+            $policySetDefinitionsOutputForBicep.Add($_.policyDefinitionReferenceId, @($_.policyDefinitionId, "", ""))
+          }
         }
       }
     }
@@ -178,11 +194,20 @@ function New-PolicySetDefinitionsBicepInputTxtFile {
     if (($policySetDefinitionsOutputForBicep.Count) -ne 0) {
       $policySetDefinitionsOutputForBicep.Keys | Sort-Object | ForEach-Object {
         $definitionReferenceId = $_
+
         $definitionReferenceIdForParameters = $_
         $definitionId = $($policySetDefinitionsOutputForBicep[$_][0])
         $groups = $($policySetDefinitionsOutputForBicep[$_][1])
+        $definitionVersion = $($policySetDefinitionsOutputForBicep[$_][2])
 
-        # If definitionReferenceId or definitionReferenceIdForParameters contains apostrophes, replace that apostrophe with a backslash and an apostrohphe for Bicep string escaping
+        # Ensure definitionVersion is always set to '' if empty, otherwise wrap it in single quotes
+        if ([string]::IsNullOrEmpty($definitionVersion)) {
+          $definitionVersion = "''"
+        } else {
+          $definitionVersion = "'$definitionVersion'"
+        }
+
+        # If definitionReferenceId or definitionReferenceIdForParameters contains apostrophes, replace that apostrophe with a backslash and an apostrophe for Bicep string escaping
         if ($definitionReferenceId.Contains("'")) {
           $definitionReferenceId = $definitionReferenceId.Replace("'", "\'")
         }
@@ -196,11 +221,10 @@ function New-PolicySetDefinitionsBicepInputTxtFile {
           $definitionReferenceIdForParameters = "['$definitionReferenceIdForParameters']"
 
           # Add nested array of objects to each Policy Set/Initiative Definition in the Bicep variable, without the '.' before the definitionReferenceId to make it an accessor
-          Add-Content -Path "$rootPath/$definitionsSetLongPath/$defintionsSetTxtFileName" -Encoding "utf8" -Value "`t`t`t{`r`n`t`t`t`tdefinitionReferenceId: '$definitionReferenceId'`r`n`t`t`t`tdefinitionId: '$definitionId'`r`n`t`t`t`tdefinitionParameters: $policySetDefParamVarCreation$definitionReferenceIdForParameters.parameters`r`n`t`t`t`tdefinitionGroups: [$groups]`r`n`t`t`t}"
-        }
-        else {
+          Add-Content -Path "$rootPath/$definitionsSetLongPath/$defintionsSetTxtFileName" -Encoding "utf8" -Value "`t`t`t{`r`n`t`t`t`tdefinitionReferenceId: '$definitionReferenceId'`r`n`t`t`t`tdefinitionId: '$definitionId'`r`n`t`t`t`tdefinitionParameters: $policySetDefParamVarCreation$definitionReferenceIdForParameters.parameters`r`n`t`t`t`tdefinitionGroups: [$groups]`r`n`t`t`t`tdefinitionVersion: $definitionVersion`r`n`t`t`t}"
+        } else {
           # Add nested array of objects to each Policy Set/Initiative Definition in the Bicep variable
-          Add-Content -Path "$rootPath/$definitionsSetLongPath/$defintionsSetTxtFileName" -Encoding "utf8" -Value "`t`t`t{`r`n`t`t`t`tdefinitionReferenceId: '$definitionReferenceId'`r`n`t`t`t`tdefinitionId: '$definitionId'`r`n`t`t`t`tdefinitionParameters: $policySetDefParamVarCreation.$definitionReferenceIdForParameters.parameters`r`n`t`t`t`tdefinitionGroups: [$groups]`r`n`t`t`t}"
+          Add-Content -Path "$rootPath/$definitionsSetLongPath/$defintionsSetTxtFileName" -Encoding "utf8" -Value "`t`t`t{`r`n`t`t`t`tdefinitionReferenceId: '$definitionReferenceId'`r`n`t`t`t`tdefinitionId: '$definitionId'`r`n`t`t`t`tdefinitionParameters: $policySetDefParamVarCreation.$definitionReferenceIdForParameters.parameters`r`n`t`t`t`tdefinitionGroups: [$groups]`r`n`t`t`t`tdefinitionVersion: $definitionVersion`r`n`t`t`t}"
         }
       }
     }

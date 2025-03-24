@@ -77,6 +77,7 @@ Throughout the development of Bicep code you should follow the [Bicep Best Pract
 
 - Strict `camelCasing` must be used for all elements:
   - Symbolic names for:
+    - Types
     - Parameters
     - Variables
     - Resource
@@ -102,6 +103,7 @@ Throughout the development of Bicep code you should follow the [Bicep Best Pract
 
 | Element Type | Naming Prefix | Example                                                              |
 | :----------: | :-----------: | :------------------------------------------------------------------- |
+|    Types     |     `typ`     | `typCustomRole`, `typSubnetOptions`                                  |
 |  Parameters  |     `par`     | `parLocation`, `parManagementGroupsNamePrefix`                       |
 |  Variables   |     `var`     | `varConditionExpression`, `varIntermediateRootManagementGroupName`   |
 |  Resources   |     `res`     | `resIntermediateRootManagementGroup`, `resResourceGroupLogAnalytics` |
@@ -122,7 +124,7 @@ For all Bicep files created as part of this project they will follow the structu
 
 ![Bicep File Structure By Element Type Image](media/bicep-structure.png)
 
-> Parameters, Variables, Resources, Modules & Outputs are all types of elements.
+> Types, Parameters, Variables, Resources, Modules & Outputs are all types of elements.
 
 ### Bicep File Structure Example
 
@@ -132,9 +134,16 @@ Below is an example of Bicep file complying with the structure and styling guide
 // SCOPE
 targetScope = 'subscription' //Deploying at Subscription scope to allow resource groups to be created and resources in one deployment
 
+// METADATA
+metadata name = 'ALZ Bicep - Example Module'
+metadata description = 'ALZ Bicep Module used as an example'
+
+// TYPES
+@minValue(0)
+type typExampleNonNegativeInteger = int
 
 // PARAMETERS
-@sys.description('Example description for parameter. - DEFAULT VALUE: "TEST"')
+@sys.description('Example description for parameter.') // Avoid describing default values
 param parExampleResourceGroupNamePrefix string = 'TEST'
 
 
@@ -256,3 +265,9 @@ Get-ChildItem -Recurse -Path infra-as-code/bicep/modules/ -Filter '*.json' -Excl
 Each resource must use the latest available, working, API version. If the latest API version cannot be used for any reason, a comment must be placed above the resource in the module file stating why and also called out as part of the PR.
 
 > The Bicep linter rule `use-recent-api-versions` will now also check for this 👍
+
+### Release Process Diagram
+
+When adding new parameters to a module, changing existing parameter names, or creating a new module, there are some additional steps that must be considered to ensure the [Accelerator](https://github.com/Azure/ALZ-Bicep/wiki/Accelerator) works with the associated [ALZ-PowerShell-Module](https://github.com/Azure/Alz-powershell-module). The accelerator publishes the [ALZ-Powershell.config.json](https://github.com/Azure/ALZ-Bicep/blob/main/accelerator/.config/ALZ-Powershell.config.json) file which contains the configuration required for accelerator deployment. The following diagram outlines the steps for release process and provides additional context for changes that may be required:
+
+![Release Process](media/alz-bicep-release-process.png)

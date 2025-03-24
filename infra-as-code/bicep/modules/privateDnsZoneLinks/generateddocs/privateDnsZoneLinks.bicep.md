@@ -5,7 +5,9 @@
 Parameter name | Required | Description
 -------------- | -------- | -----------
 parSpokeVirtualNetworkResourceId | No       | The Spoke Virtual Network Resource ID.
+parPrivateDnsZoneLinkResolutionPolicy | No       | Fallback to internet for Azure Private DNS zones.
 parPrivateDnsZoneResourceId | No       | The Private DNS Zone Resource IDs to associate with the spoke Virtual Network.
+parResourceLockConfig | No       | Resource Lock Configuration for Private DNS Zone Links.  - `kind` - The lock settings of the service which can be CanNotDelete, ReadOnly, or None. - `notes` - Notes about this lock.  
 
 ### parSpokeVirtualNetworkResourceId
 
@@ -13,11 +15,34 @@ parPrivateDnsZoneResourceId | No       | The Private DNS Zone Resource IDs to as
 
 The Spoke Virtual Network Resource ID.
 
+### parPrivateDnsZoneLinkResolutionPolicy
+
+![Parameter Setting](https://img.shields.io/badge/parameter-optional-green?style=flat-square)
+
+Fallback to internet for Azure Private DNS zones.
+
+- Default value: `Default`
+
+- Allowed values: `Default`, `NxDomainRedirect`
+
 ### parPrivateDnsZoneResourceId
 
 ![Parameter Setting](https://img.shields.io/badge/parameter-optional-green?style=flat-square)
 
 The Private DNS Zone Resource IDs to associate with the spoke Virtual Network.
+
+### parResourceLockConfig
+
+![Parameter Setting](https://img.shields.io/badge/parameter-optional-green?style=flat-square)
+
+Resource Lock Configuration for Private DNS Zone Links.
+
+- `kind` - The lock settings of the service which can be CanNotDelete, ReadOnly, or None.
+- `notes` - Notes about this lock.
+
+
+
+- Default value: `@{kind=None; notes=This lock was created by the ALZ Bicep Private DNS Zone Links Module.}`
 
 ## Snippets
 
@@ -34,8 +59,17 @@ The Private DNS Zone Resource IDs to associate with the spoke Virtual Network.
         "parSpokeVirtualNetworkResourceId": {
             "value": ""
         },
+        "parPrivateDnsZoneLinkResolutionPolicy": {
+            "value": "Default"
+        },
         "parPrivateDnsZoneResourceId": {
             "value": ""
+        },
+        "parResourceLockConfig": {
+            "value": {
+                "kind": "None",
+                "notes": "This lock was created by the ALZ Bicep Private DNS Zone Links Module."
+            }
         }
     }
 }
